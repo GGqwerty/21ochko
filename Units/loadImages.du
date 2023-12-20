@@ -2,9 +2,11 @@ card_images: db 'Bitmaps\axx.bmp', 0
 card_handles: dd 52 dup ?
 
 button_name: db 'MenuButtons\bx.bmp', 0
+button_name_push: db 'MenuButtons\bxPush.bmp', 0
 button_name_game: db 'GameButtons\bx.bmp', 0
 button_name_game_push: db 'GameButtons\bxPush.bmp', 0
 button_arr: dd 15 dup 0
+button_arr_push: dd 15 dup 0
 button_arr_game: dd 5 dup 0
 button_arr_game_push: dd 5 dup 0
 

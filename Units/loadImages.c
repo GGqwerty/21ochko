@@ -22,6 +22,19 @@ LR_DEFAULTCOLOR+LR_DEFAULTSIZE+LR_LOADFROMFILE
 
      mov ecx, 1
 @@:
+     mov [button_name_push+13], cl
+     add byte [button_name_push+13], '0'
+     push ecx
+     invoke LoadImage, [_hModule], button_name_push, IMAGE_BITMAP, 0, 0,\
+LR_DEFAULTCOLOR+LR_DEFAULTSIZE+LR_LOADFROMFILE
+     pop ecx
+     mov [button_arr_push+4*ecx-4], eax
+     inc ecx
+     cmp ecx, 8
+     jl @B
+
+     mov ecx, 1
+@@:
      mov [button_name_game+13], cl
      add byte [button_name_game+13], '0'
      push ecx

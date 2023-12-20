@@ -139,16 +139,17 @@ drawBitmap.endChange:
      ret
 endp
 
-proc drawBitmap.ChangeBitmapUnderDraw uses ebx eax ecx edx,\
+proc drawBitmap.ChangeBitmapUnderDraw uses ebx eax ecx edx esi edi,\
      NewhBitmap, hBitmap
-
+     mov edi, [drawBitmap.bitmapCoord.pointer]
+     mov esi, [drawBitmap.bitmapHandles.pointer]
 mov ecx, 103*4
 @@:
      mov eax, [hBitmap]
-     cmp [drawBitmap.bitmapHandles+ecx], eax
+     cmp [esi+ecx], eax
      jnz drawBitmap.ChangeBitmap.next
      mov eax, [NewhBitmap]
-     mov [drawBitmap.bitmapHandles+ecx], eax
+     mov [esi+ecx], eax
      jmp drawBitmap.endChangeBitmap
 
 drawBitmap.ChangeBitmap.next:
@@ -161,7 +162,7 @@ drawBitmap.endChangeBitmap:
      ret
 endp
 
-proc drawBitmap.TakeCoords uses ebx ecx edx,\
+proc drawBitmap.TakeCoords uses ebx ecx edx esi edi,\
      hBitmap
      mov edi, [drawBitmap.bitmapCoord.pointer]
      mov esi, [drawBitmap.bitmapHandles.pointer]
@@ -482,7 +483,53 @@ drawBitmap.swapQueueuses.end:
 
 endp
 
+proc drawBitmap.swapButtonPush uses ecx edx,\
+     hBitmap
 
+     mov ecx, 1
+@@:
+     push ecx
+     mov eax, [button_arr_game+4*ecx-4]
+     cmp [hBitmap], eax
+     jz drawBitmap.swapButtonPush.1
+     mov eax, [button_arr_game_push+4*ecx-4]
+     cmp [hBitmap], eax
+     jz drawBitmap.swapButtonPush.2
+     pop ecx
+     inc ecx
+     cmp ecx, 4
+     jl @B
 
+     mov ecx, 1
+@@:
+     push ecx
+     mov eax, [button_arr+4*ecx-4]
+     cmp [hBitmap], eax
+     jz drawBitmap.swapButtonPush.3
+     mov eax, [button_arr_push+4*ecx-4]
+     cmp [hBitmap], eax
+     jz drawBitmap.swapButtonPush.4
+     pop ecx
+     inc ecx
+     cmp ecx, 8
+     jl @B
+     mov eax, 0
+     ret
 
-
+drawBitmap.swapButtonPush.1:
+     stdcall drawBitmap.ChangeBitmapUnderDraw, [button_arr_game_push+4*ecx-4], [button_arr_game+4*ecx-4]
+     mov eax, [button_arr_game_push+4*ecx-4]
+     ret
+drawBitmap.swapButtonPush.2:
+     stdcall drawBitmap.ChangeBitmapUnderDraw,  [button_arr_game+4*ecx-4], [button_arr_game_push+4*ecx-4]
+     mov eax, [button_arr_game+4*ecx-4]
+     ret
+drawBitmap.swapButtonPush.3:
+     stdcall drawBitmap.ChangeBitmapUnderDraw, [button_arr_push+4*ecx-4], [button_arr+4*ecx-4]
+     mov eax, [button_arr_push+4*ecx-4]
+     ret
+drawBitmap.swapButtonPush.4:
+     stdcall drawBitmap.ChangeBitmapUnderDraw,  [button_arr+4*ecx-4], [button_arr_push+4*ecx-4]
+     mov eax, [button_arr+4*ecx-4]
+     ret
+endp

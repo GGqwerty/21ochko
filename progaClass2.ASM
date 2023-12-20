@@ -173,17 +173,14 @@ msgPaint.drawGame.gameplay:
 msgPaint.drawGame.endgame:
  mov dword [printFlag], 2
  invoke BeginPaint, [hwnddlg], ps
- push eax
- push eax
- push eax
- stdcall dealer.gameplay, eax, 1
- pop eax
- stdcall bot.gameplay, eax, 0
+ mov [bufHDC], eax
+msgPaint.drawGame.endgame.hitMore21:
+ stdcall dealer.gameplay, [bufHDC], 1
+ stdcall bot.gameplay, [bufHDC], 0
  stdcall gameProcess.deletePlayButtons
  stdcall gameProcess.swapDealerFirstCard
- pop eax
- stdcall dealer.gameplay, eax, 5
- pop eax
+ stdcall dealer.gameplay, [bufHDC], 5
+ mov eax, [bufHDC]
  stdcall gameProcess.cmpResults
  mov dword [printFlag], 3
  stdcall drawBitmap.DrawAll, eax
@@ -195,11 +192,13 @@ msgPaint.drawGame.endgame:
 
 msgPaint.drawGame.hit:
  invoke BeginPaint, [hwnddlg], ps
- push eax
- stdcall gameProcess.Game, 2, MYMESSAGE_HIT, eax
- pop eax
- stdcall drawBitmap.DrawAll, eax
+ mov [bufHDC], eax
+ stdcall gameProcess.Game, 2, MYMESSAGE_HIT, [bufHDC]
 
+ stdcall drawBitmap.DrawAll, [bufHDC]
+
+ cmp dword [gameProcess.points+4*2], 21
+ jnl msgPaint.drawGame.endgame.hitMore21
  invoke EndPaint, [hwnddlg], ps
  mov dword [printFlag], 2
  jmp msgPaint.endPaint
@@ -207,24 +206,16 @@ msgPaint.drawGame.hit:
 msgPaint.drawGame.double:
  mov dword [printFlag], 2
  invoke BeginPaint, [hwnddlg], ps
- push eax
- push eax
- push eax
- push eax
- push eax
- stdcall gameProcess.Game, 2, MYMESSAGE_HIT, eax
- pop eax
- stdcall drawBitmap.DrawAll, eax
+ mov [bufHDC], eax
+ stdcall gameProcess.Game, 2, MYMESSAGE_HIT, [bufHDC]
+ stdcall drawBitmap.DrawAll, [bufHDC]
 
- pop eax
- stdcall dealer.gameplay, eax, 1
- pop eax
- stdcall bot.gameplay, eax, 0
+ stdcall dealer.gameplay, [bufHDC], 1
+ stdcall bot.gameplay, [bufHDC], 0
  stdcall gameProcess.deletePlayButtons
  stdcall gameProcess.swapDealerFirstCard
- pop eax
- stdcall dealer.gameplay, eax, 5
- pop eax
+ stdcall dealer.gameplay, [bufHDC], 5
+ mov eax, [bufHDC]
  stdcall gameProcess.cmpResults
  mov dword [printFlag], 3
  stdcall drawBitmap.DrawAll, eax
@@ -279,51 +270,88 @@ msgLButtonDown:
  mov [movePt.y], ebx
  stdcall drawBitmap.PtInRect, eax, ebx
  cmp eax, 0
+ jz @F
+ mov dword [hwndBitmapMove], eax
+ stdcall drawBitmap.swapButtonPush, [hwndBitmapMove]
+ cmp eax, 0
+ jz @F
+ mov dword [hwndBitmapMove], eax
+@@:
+ invoke InvalidateRect, [hwnddlg], NULL, FALSE
+ pop eax
+ pop ebx
+ jmp ExitWndProc
+
+
+
+ jmp ExitWndProc
+
+msgMouseMove:
+ ;invoke InvalidateRect, [hwnddlg], NULL, FALSE
+
+ jmp ExitWndProc
+
+msgLButtonUp:
+ push ebx
+ push eax
+ stdcall drawBitmap.swapButtonPush, [hwndBitmapMove]
+ cmp eax, 0
+ jz @F
+ mov dword [hwndBitmapMove], eax
+@@:
+ mov eax, [lParam]
+ xor ebx, ebx
+ mov bx, ax
+ shr eax, 16
+ mov [movePt.x], eax
+ mov [movePt.y], ebx
+ stdcall drawBitmap.PtInRect, eax, ebx
+ cmp eax, 0
  jz lol.end
- ;mov dword [hwndBitmapMove], eax
- ;mov dword [moveFlag], 1
+ cmp eax, [hwndBitmapMove]
+ jnz lol.end
  cmp eax, [button_arr]
- jz msgLButtonDown.menu.Start
+ jz msgLButtonUp.menu.Start
  cmp eax, [button_arr+8]
- jz msgLButtonDown.menu.Settings
+ jz msgLButtonUp.menu.Settings
  cmp eax, [button_arr+12]
- jz msgLButtonDown.menu.Exit
+ jz msgLButtonUp.menu.Exit
  cmp eax, [button_arr+4]
- jz msgLButtonDown.menu.Continue
+ jz msgLButtonUp.menu.Continue
  cmp eax, [button_arr_game]
- jz msgLButtonDown.game.Hit
+ jz msgLButtonUp.game.Hit
  cmp eax, [button_arr_game+4]
- jz msgLButtonDown.game.Stand
+ jz msgLButtonUp.game.Stand
  cmp eax, [button_arr_game+8]
- jz msgLButtonDown.game.Double
+ jz msgLButtonUp.game.Double
  cmp eax, [button_arr+16]
- jz msgLButtonDown.menu.chooseTextColor
+ jz msgLButtonUp.menu.chooseTextColor
  cmp eax, [button_arr+20]
- jz msgLButtonDown.menu.chooseBackground
+ jz msgLButtonUp.menu.chooseBackground
  cmp eax, [button_arr+24]
- jz msgLButtonDown.menu.back
+ jz msgLButtonUp.menu.back
 
  jmp lol.end
 
-msgLButtonDown.menu.Start:
+msgLButtonUp.menu.Start:
  mov dword [printFlag], 1
  stdcall drawBitmap.swapQueue, 1
  jmp lol.end
 
-msgLButtonDown.menu.Continue:
+msgLButtonUp.menu.Continue:
  mov dword [printFlag], 5
  stdcall drawBitmap.swapQueue, 1
  jmp lol.end
 
-msgLButtonDown.menu.Settings:
+msgLButtonUp.menu.Settings:
  mov dword [printFlag], 10
  stdcall drawBitmap.swapQueue, 2
  jmp lol.end
 
-msgLButtonDown.menu.Exit:
+msgLButtonUp.menu.Exit:
  jmp msgDestroyWindow
 
-msgLButtonDown.menu.chooseTextColor:
+msgLButtonUp.menu.chooseTextColor:
  mov ecx, sizeof.CHOOSECOLOR
 @@:
  mov byte[mainWindow.dialogColor+ecx-1], 0
@@ -341,7 +369,7 @@ msgLButtonDown.menu.chooseTextColor:
 @@:
  jmp lol.end
 
-msgLButtonDown.menu.chooseBackground:
+msgLButtonUp.menu.chooseBackground:
  mov ecx, sizeof.CHOOSECOLOR
 @@:
  mov byte[mainWindow.dialogColor+ecx-1], 0
@@ -362,69 +390,32 @@ msgLButtonDown.menu.chooseBackground:
  jmp lol.end
 
 
-msgLButtonDown.menu.back:
+msgLButtonUp.menu.back:
  stdcall drawBitmap.swapQueue, 0
  mov dword [printFlag], 0
  jmp lol.end
 
-msgLButtonDown.game.Hit:
+msgLButtonUp.game.Hit:
  mov dword [printFlag], 4
 
  jmp lol.end
 
-msgLButtonDown.game.Stand:
+msgLButtonUp.game.Stand:
  mov dword [printFlag], 3
 
  jmp lol.end
 
-msgLButtonDown.game.Double:
+msgLButtonUp.game.Double:
  mov dword [printFlag], 6
  jmp lol.end
 
 lol.end:
+ mov dword [hwndBitmapMove], 0
  invoke InvalidateRect, [hwnddlg], NULL, FALSE
  pop eax
  pop ebx
  jmp ExitWndProc
 
-msgMouseMove:
- cmp dword [moveFlag], 0
- jz ExitWndProc
- push eax
- push ebx
- mov eax, [lParam]
- xor ebx, ebx
- mov bx, ax
- shr eax, 16
- mov [movePtBuf.x], eax
- mov [movePtBuf.y], ebx
- sub eax, [movePt.x]
- sub ebx, [movePt.y]
- mov [xMove], eax
- mov [yMove], ebx
- stdcall drawBitmap.TakeCoords, [hwndBitmapMove]
- xor ebx, ebx
- mov bx, ax
- shr eax, 16
- add eax, [yMove]
- add ebx, [xMove]
- stdcall drawBitmap.ChangeUnderDraw, eax, ebx, [hwndBitmapMove]
- mov eax, [movePtBuf.x]
- mov ebx, [movePtBuf.y]
- mov [movePt.x], eax
- mov [movePt.y], ebx
-
-
- invoke InvalidateRect, [hwnddlg], NULL, FALSE
-
- pop ebx
- pop eax
-
- jmp ExitWndProc
-
-msgLButtonUp:
- ;mov dword [moveFlag], 0
- jmp ExitWndProc
 
 msgCloseWindow:
  invoke DestroyWindow, [hwnddlg]
@@ -452,7 +443,7 @@ _hModule: dd 00h ;модуля
 printFlag: dd 0h
 lastPrintFlag: dd 00h
 
-
+bufHDC: dd ?
 moveFlag: dd 0
 hwndBitmapMove: dd 0
 movePt POINT
