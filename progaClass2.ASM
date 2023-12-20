@@ -40,6 +40,7 @@ include 'Units\brez.c'
 
 start:
  invoke SetProcessDPIAware
+ invoke mciSendString, music, 0, 0, 0
  stdcall loadImages.CursorLoad
  invoke GetModuleHandle, 0
  mov dword [_hModule], eax
@@ -451,6 +452,8 @@ movePtBuf POINT
 xMove: dd 0
 yMove: dd 0
 
+music: db 'play music.mp3 repeat', 0
+
 include 'Units\random.h'
 include 'Units\random.du'
 
@@ -490,7 +493,8 @@ library kernel, 'KERNEL32.DLL',\
  time, 'Ntdll.dll',\
  ole, 'OLE32.DLL',\
  comct32, 'Comctl32.dll',\
- comdlg32, 'comdlg32.dll'
+ comdlg32, 'comdlg32.dll',\
+ winmm, 'winmm.dll'
 import kernel,\
  GetModuleHandle, 'GetModuleHandleW',\
  ExitProcess , 'ExitProcess',\
@@ -562,6 +566,8 @@ import comct32,\
 import comdlg32,\
  ChooseColor, 'ChooseColorA'
 
+import winmm,\
+ mciSendString, 'mciSendStringA'
 ;Ресурсы
 ;section '.rsrc' resource data readable
 
