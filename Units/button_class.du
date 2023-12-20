@@ -1,0 +1,13 @@
+_button_class_name: db 'BUTTON', 0
+
+button_handles: dd 52 dup ?
+
+button_handles_id: dd 52 dup ?
+
+button_schet: dd 0
+
+;buf_image_handle: dd ?
+
+button_stop_text: db 'Stop', 0
+button_newGame_text: db 'New Game', 0
+

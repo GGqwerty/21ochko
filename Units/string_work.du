@@ -1,0 +1,5 @@
+_Bool_Trans_Number: dd 0
+YouLose: db 'Lose', 0
+YouWin: db 'Win', 0
+YouDraw: db 'Draw', 0
+string_work.bufSrting: db 100 dup 0

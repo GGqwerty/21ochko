@@ -1,0 +1,20 @@
+deltaX dd ?
+deltaY dd ?
+raznica dd ?
+deltaerr dd ?
+dir dd ?
+variable dd ?
+Flag dd ?
+
+brez.x0: dd ?
+brez.y0: dd ?
+
+brez.hBitmap: dd ?
+brez.hdc: dd ?
+
+brez.timeNow: dd ?
+brez.timeStart: dd ?
+brez.S: dd ?
+brez.eax: dd ?
+
+brez.ecxLast: dd 0

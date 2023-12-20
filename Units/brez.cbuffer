@@ -1,0 +1,171 @@
+proc brez.DrawLine uses edx eax,\
+     x0,y0,x1,y1,hBitmap,hdc
+
+        mov eax, [x0]
+        mov [brez.x0], eax
+        mov eax, [y0]
+        mov[brez.y0], eax
+
+        mov eax, [hBitmap]
+        mov[brez.hBitmap], eax
+        mov eax, [hdc]
+        mov[brez.hdc], eax
+
+
+        mov [dir], 1
+        mov [Flag], 0
+
+        mov eax, [x1]
+        cmp eax,[x0]
+        jnl @F
+        xchg eax,[x0]
+        mov [x1],eax
+        mov eax, [y1]
+        xchg eax, [y0]
+        mov [y1], eax
+@@:
+
+        mov eax, [x1]
+        sub eax, [x0]
+        mov [deltaX], eax
+
+        mov eax, [y1]
+        sub eax, [y0]
+        jg .Greater
+        jz .Zeroer
+        neg eax
+        mov [dir],-1
+        jmp .Greater
+.Zeroer:
+        mov [dir], 0
+.Greater:
+        mov [deltaY], eax
+
+        cmp eax, [deltaX]
+        jng .AllOk
+        xchg eax, [deltaX]
+        mov [deltaY], eax
+
+        mov eax, [x0]
+        xchg eax, [y0]
+        mov [x0], eax
+
+        mov eax, [x1]
+        xchg eax, [y1]
+        mov [x1], eax
+
+        mov eax, [x1]
+        cmp eax,[x0]
+        jnl @F
+        xchg eax,[x0]
+        mov [x1], eax
+        mov eax, [y1]
+        xchg eax, [y0]
+        mov [y1], eax
+@@:
+        mov [Flag], 1
+
+.AllOk:
+        mov eax, [deltaY]
+        mov [deltaerr], eax
+        inc [deltaerr]
+        inc [deltaX]
+        mov eax, 0
+        mov ecx, [deltaX]
+        ;inc cx
+        mov [brez.eax], eax
+        stdcall brez.DrawWithTimer, ecx
+
+        ret
+endp
+
+proc brez.FuncTimer uses edx ecx
+
+        invoke GetTickCount
+        mov [brez.timeNow], eax
+        mov eax, [brez.S]
+        mov edx, [brez.timeNow]
+        sub edx, [brez.timeStart]
+        imul eax, eax, edx
+        mov ecx, 3000
+        xor edx, edx
+        idiv ecx
+        mov ecx, eax
+LoopMark:
+
+        push ecx
+
+        add eax, [deltaerr]
+        cmp eax, [deltaX]
+        jng @F
+        sub eax, [deltaX]
+        mov edx, [dir]
+        add [brez.y0], edx
+
+@@:
+        inc dword [brez.x0]
+        pop ecx
+        loop LoopMark
+
+        cmp [Flag],0
+        jne .Swapped
+        push eax
+        stdcall drawBitmap.ChangeUnderDraw, [brez.x0], [brez.y0], [brez.hBitmap]
+        pop eax
+        jmp @F
+.Swapped:
+        push eax
+        stdcall drawBitmap.ChangeUnderDraw, [brez.y0], [brez.x0], [brez.hBitmap]
+        pop eax
+@@:
+
+        ret
+endp
+
+proc brez.DrawWithTimer uses edx ecx,\
+     buf
+     push eax
+     invoke GetTickCount
+     mov [brez.timeStart], eax
+     pop eax
+     mov ecx, [buf]
+     mov [brez.S], ecx
+LoopMark:
+
+        push ecx
+        cmp [Flag],0
+        jne .Swapped
+        push eax
+        stdcall drawBitmap.ChangeUnderDraw, [brez.x0], [brez.y0], [brez.hBitmap]
+        pop eax
+        jmp @F
+.Swapped:
+        push eax
+        stdcall drawBitmap.ChangeUnderDraw, [brez.y0], [brez.x0], [brez.hBitmap]
+        pop eax
+@@:
+
+        add eax, [deltaerr]
+        cmp eax, [deltaX]
+        jng @F
+        sub eax, [deltaX]
+        mov edx, [dir]
+        add [brez.y0], edx
+
+@@:
+        inc dword [brez.x0]
+        stdcall drawBitmap.DrawAll, [brez.hdc]
+        pop ecx
+        loop LoopMark
+
+
+
+
+
+        ret
+endp
+
+
+
+
+

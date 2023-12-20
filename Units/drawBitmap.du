@@ -1,0 +1,31 @@
+drawBitmap.hbm dd ?
+drawBitmap.hOldbm dd ?
+drawBitmap.hMemDC dd ?
+drawBitmap.bm BITMAP
+drawBitmap.ptSize POINT
+drawBitmap.ptOrg POINT
+
+drawBitmap.bitmapHandles: dd 104 dup 0
+drawBitmap.bitmapCoord: dd 208 dup ?
+drawBitmap.windowHdc: dd ?
+
+drawBitmap.bitmapHandles.pointer: dd drawBitmap.bitmapHandles
+drawBitmap.bitmapCoord.pointer: dd drawBitmap.bitmapCoord
+
+
+drawBitmap.bitmapHandles.menu: dd 104 dup 0
+drawBitmap.bitmapCoord.menu: dd 208 dup ?
+
+drawBitmap.bitmapHandles.settings: dd 104 dup 0
+drawBitmap.bitmapCoord.settings: dd 208 dup ?
+
+drawBitmap.PtInRect.bm BITMAP
+drawBitmap.PtInRect.pt POINT
+drawBitmap.PtInRect.rect RECT
+
+drawBitmap.buf.hMemDC dd ?
+drawBitmap.buf.bm dd ?
+
+
+
+

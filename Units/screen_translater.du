@@ -1,0 +1,29 @@
+screen_translate.width: dd ?
+screen_translate.height: dd ?
+screen_translate.width.half: dd ?
+screen_translate.height.half: dd ?
+
+screen_translate.clientRect RECT
+
+screen_translate.coordx1: dw 0
+screen_translate.coordy1: dw 0
+
+screen_translate.coordx2: dw 0
+screen_translate.coordy2: dw 0
+
+screen_translate.coordx3: dw 0
+screen_translate.coordy3: dw 0
+
+screen_translate.coordx4: dw 0
+screen_translate.coordy4: dw 0
+
+screen_translate.coordx5: dw 0
+screen_translate.coordy5: dw 0
+
+screen_translate.coordxd: dw 0
+screen_translate.coordyd: dw 0
+
+screen_translate.bufdd: dd ?
+
+
+

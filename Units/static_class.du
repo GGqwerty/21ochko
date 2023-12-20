@@ -1,0 +1,13 @@
+static_class WNDCLASS
+_static_class_name: db 'STATIC', 0
+
+static_handles: dd 52 dup ?
+
+static_handles_id: dd 52 dup ?
+
+static_schet: dd 0
+
+buf_image_handle: dd ?
+
+
+

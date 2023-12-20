@@ -1,0 +1,23 @@
+gameProcess.Aces: dd 6 dup 0
+gameProcess.CardCount: db 6 dup 0
+gameProcess.points: dd 6 dup 0
+gameProcess.coordx: dd 6 dup 0
+
+gameProcess.GameResult: dd 6 dup 2
+gameProcess.WhoPlayNow: dd 6 dup 0
+
+gameProcess.hMemDC: dd ?
+
+
+gameProcess.CardNow: dd 51
+
+
+
+
+
+
+
+
+
+
+

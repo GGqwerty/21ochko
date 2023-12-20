@@ -1,0 +1,2 @@
+Random.wPrevNumberNach: dd 2 dup ?
+Random.wPrevNumberBuf: dd 2 dup ?

@@ -1,0 +1,7 @@
+mainWindow.wc WNDCLASSEX
+mainWindow.ClassName: db 'mainWindowClass', 0
+mainWindow.greenBrush: dd ?
+mainWindow.dialogColor CHOOSECOLOR
+mainWindow.arr: dd 16 dup 0
+mainWindow.textColor: dd $ffff_ffff
+
