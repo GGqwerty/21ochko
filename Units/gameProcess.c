@@ -475,10 +475,12 @@ endGameDraw:
 
 endGameLoose:
  mov dword [gameProcess.GameResult+edx*4], 0
+ dec dword [gameProcess.ResultsOfAllGames+edx*4]
  jmp endGame
 
 endGameWin:
  mov dword [gameProcess.GameResult+edx*4], 2
+ inc dword [gameProcess.ResultsOfAllGames+edx*4]
  jmp endGame
 
 endGame:
@@ -515,9 +517,11 @@ proc gameProcess.deletePlayButtons uses ebx ecx eax
      mov ecx, 1
 @@:
      stdcall drawBitmap.DeleteFromDraw, [button_arr_game+4*ecx-4]
+     stdcall drawBitmap.DeleteFromDraw, [button_arr_game_push+4*ecx-4]
      inc ecx
      cmp ecx, 5
      jl @B
+
 
      ret
 endp

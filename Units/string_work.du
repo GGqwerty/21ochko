@@ -3,3 +3,11 @@ YouLose: db 'Lose', 0
 YouWin: db 'Win', 0
 YouDraw: db 'Draw', 0
 string_work.bufSrting: db 100 dup 0
+string_work.bufInt: dd ?
+
+string_work.flag: dd ?
+
+
+
+
+

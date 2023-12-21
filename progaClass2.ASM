@@ -23,8 +23,6 @@ MYMESSAGE_DOUBLE = 4
 MYMESSAGE_SPLIT = 5
 MYMESSAGE_NEWPLAYER = 6
 
-
-
 section '.code' code readable executable
 include 'Units\mix.c'
 include 'Units\random.c'
@@ -142,6 +140,7 @@ msgPaint.drawGame.prepare:
  stdcall gameProcess.mix
  invoke BeginPaint, [hwnddlg], ps
  mov [bufHDC], eax
+ nop
  stdcall gameProcess.printStart, [hwnddlg], [bufHDC]
  stdcall drawBitmap.DrawAll, [bufHDC]
  stdcall dealer.gameplay, [bufHDC], 4
@@ -463,6 +462,7 @@ _hModule: dd 00h ;модуля
 printFlag: dd 0h
 lastPrintFlag: dd 00h
 
+doubleFlag: dd ?
 bufHDC: dd ?
 moveFlag: dd 0
 hwndBitmapMove: dd 0
@@ -553,7 +553,8 @@ import user,\
  GetClientRect, 'GetClientRect',\
  DrawText, 'DrawTextA',\
  LoadCursorFromFile, 'LoadCursorFromFileA',\
- SetProcessDPIAware, 'SetProcessDPIAware'
+ SetProcessDPIAware, 'SetProcessDPIAware',\
+ wsprintf, 'wsprintfA'
 
 import gdi,\
  DeleteObject , 'DeleteObject',\

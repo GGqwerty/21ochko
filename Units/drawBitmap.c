@@ -279,6 +279,77 @@ proc drawBitmap.drawStrings uses ecx ebx,\
      cmp dword [printFlag], 10
      jz drawBitmap.drawStrings.end
 
+
+
+     cmp dword [gameProcess.WhoPlayNow], 0
+     jz @F
+drawBitmap.playerScore.1.1:
+     mov eax, [gameProcess.ResultsOfAllGames+0]
+     stdcall string_work.numInString, eax
+     xor ecx, ecx
+     xor ebx, ebx
+     mov cx, [screen_translate.coordx1]
+     mov bx, [screen_translate.coordy1]
+     add ecx, width_cards/2
+     add ebx, 20+height_cards
+     invoke TextOut, [drawBitmap.buf.hMemDC], ecx, ebx, eax, 4
+drawBitmap.playerScore.2.2:
+@@:
+     cmp dword[gameProcess.WhoPlayNow+4], 0
+     jz @F
+     mov eax, [gameProcess.ResultsOfAllGames+4]
+     stdcall string_work.numInString, eax
+     xor ecx, ecx
+     xor ebx, ebx
+     mov cx, [screen_translate.coordx2]
+     mov bx, [screen_translate.coordy2]
+     add ecx, width_cards/2
+     add ebx, 20+height_cards
+     invoke TextOut, [drawBitmap.buf.hMemDC], ecx, ebx, eax, 4
+drawBitmap.playerScore.3.3:
+@@:
+     cmp dword[gameProcess.WhoPlayNow+8], 0
+     jz @F
+     mov eax, [gameProcess.ResultsOfAllGames+8]
+     stdcall string_work.numInString, eax
+     xor ecx, ecx
+     xor ebx, ebx
+     mov cx, [screen_translate.coordx3]
+     mov bx, [screen_translate.coordy3]
+     add ecx, width_cards/2
+     add ebx, 20+height_cards
+     invoke TextOut, [drawBitmap.buf.hMemDC], ecx, ebx, eax, 4
+drawBitmap.playerScore.4.4:
+@@:
+     cmp dword[gameProcess.WhoPlayNow+12], 0
+     jz @F
+     mov eax, [gameProcess.ResultsOfAllGames+12]
+     stdcall string_work.numInString, eax
+     xor ecx, ecx
+     xor ebx, ebx
+     mov cx, [screen_translate.coordx4]
+     mov bx, [screen_translate.coordy4]
+     add ecx, width_cards/2
+     add ebx, 20+height_cards
+     invoke TextOut, [drawBitmap.buf.hMemDC], ecx, ebx, eax, 4
+
+drawBitmap.playerScore.5.5:
+@@:
+     cmp dword[gameProcess.WhoPlayNow+16], 0
+     jz @F
+     mov eax, [gameProcess.ResultsOfAllGames+16]
+     stdcall string_work.numInString, eax
+     xor ecx, ecx
+     xor ebx, ebx
+     mov cx, [screen_translate.coordx5]
+     mov bx, [screen_translate.coordy5]
+     add ecx, width_cards/2
+     add ebx, 20+height_cards
+     invoke TextOut, [drawBitmap.buf.hMemDC], ecx, ebx, eax, 4
+
+
+
+
      cmp dword [printFlag], 3
      jz drawBitmap.drawStrings.endgame
 
