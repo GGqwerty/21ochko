@@ -323,6 +323,9 @@ gameProcess.newGame:
 
      stdcall drawBitmap.DeleteAllFromDraw
      stdcall drawBitmap.AddToDraw,  5, 5, [card_cover_koloda]
+     mov ecx, [screen_translate.width]
+     sub ecx, volume_size
+     stdcall drawBitmap.AddToDraw,  ecx, 0, [button_onof]
 
      cmp dword[gameProcess.WhoPlayNow+0*4], 0
      jz @F
@@ -518,41 +521,6 @@ proc gameProcess.deletePlayButtons uses ebx ecx eax
 
      ret
 endp
-
-proc gameProcess.printStartMenu uses ebx edx ecx,\
-     hdc
-
-     mov ebx, [screen_translate.width.half]
-     sub ebx, width_button_menu/2
-     mov ecx, [screen_translate.height.half]
-     sub ecx, height_button_menu/2
-     sub ecx, height_button_menu*3
-     stdcall drawBitmap.AddToDraw, ebx, ecx, [button_arr]
-
-     mov ebx, [screen_translate.width.half]
-     sub ebx, width_button_menu/2
-     mov ecx, [screen_translate.height.half]
-     sub ecx, height_button_menu/2
-     sub ecx, height_button_menu*1
-     stdcall drawBitmap.AddToDraw, ebx, ecx, [button_arr+12]
-
-     mov ebx, [screen_translate.width.half]
-     sub ebx, width_button_menu/2
-     mov ecx, [screen_translate.height.half]
-     sub ecx, height_button_menu/2
-     add ecx, height_button_menu*1
-     stdcall drawBitmap.AddToDraw, ebx, ecx, [button_arr+4]
-
-     mov ebx, [screen_translate.width.half]
-     sub ebx, width_button_menu/2
-     mov ecx, [screen_translate.height.half]
-     sub ecx, height_button_menu/2
-     add ecx, height_button_menu*3
-     stdcall drawBitmap.AddToDraw, ebx, ecx, [button_arr+8]
-
-     ret
-endp
-
 
 
 

@@ -28,7 +28,7 @@ endp
 
 ;in eax - 0 Lose, 1 Draw, 2 Win
 ;out eax - adress of string
-proc string_work.printResult uses ecx
+proc string_work.printResult
      cmp eax, 0
      jnz @F
      mov eax, YouLose

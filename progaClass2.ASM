@@ -13,6 +13,8 @@ height_button_menu = 61
 width_button_game = 155
 height_button_game = 85
 
+volume_size = 60
+
 MYMESSAGE_NEW_GAME = 0
 MYMESSAGE_DEAL = 1
 MYMESSAGE_STAND = 2
@@ -29,10 +31,8 @@ include 'Units\random.c'
 include 'Units\loadImages.c'
 include 'Units\dealer.c'
 include 'Units\drawBitmap.c'
-include 'Units\static_class.c'
 include 'Units\screen_translater.c'
 include 'Units\mainWindow.c'
-include 'Units\button_class.c'
 include 'Units\gameProcess.c'
 include 'Units\string_work.c'
 include 'Units\bot.c'
@@ -40,7 +40,7 @@ include 'Units\brez.c'
 
 start:
  invoke SetProcessDPIAware
- invoke mciSendString, music, 0, 0, 0
+ invoke mciSendString, music_play, 0, 0, 0
  stdcall loadImages.CursorLoad
  invoke GetModuleHandle, 0
  mov dword [_hModule], eax
@@ -141,21 +141,17 @@ msgPaint.drawGame.prepare:
 
  stdcall gameProcess.mix
  invoke BeginPaint, [hwnddlg], ps
- push eax
- push eax
- push eax
- push eax
- stdcall gameProcess.printStart, [hwnddlg], eax
- pop eax
- stdcall drawBitmap.DrawAll, eax
- pop eax
- stdcall dealer.gameplay, eax, 4
- pop eax
- stdcall bot.gameplay, eax, 3
- pop eax
+ mov [bufHDC], eax
+ stdcall gameProcess.printStart, [hwnddlg], [bufHDC]
+ stdcall drawBitmap.DrawAll, [bufHDC]
+ stdcall dealer.gameplay, [bufHDC], 4
+ stdcall bot.gameplay, [bufHDC], 3
  mov dword [printFlag], 2
+ mov eax, [bufHDC]
  stdcall gameProcess.printPlayButtons
  stdcall drawBitmap.DrawAll, eax
+ cmp dword [gameProcess.points+4*2], 21
+ jnl msgPaint.drawGame.endgame.hitMore21
  invoke EndPaint, [hwnddlg], ps
 
  jmp msgPaint.endPaint
@@ -309,6 +305,7 @@ msgLButtonUp:
  stdcall drawBitmap.PtInRect, eax, ebx
  cmp eax, 0
  jz lol.end
+ nop
  cmp eax, [hwndBitmapMove]
  jnz lol.end
  cmp eax, [button_arr]
@@ -331,6 +328,10 @@ msgLButtonUp:
  jz msgLButtonUp.menu.chooseBackground
  cmp eax, [button_arr+24]
  jz msgLButtonUp.menu.back
+ cmp eax, [button_on]
+ jz  msgLButtonUp.volume.on
+ cmp eax, [button_of]
+ jz  msgLButtonUp.volume.of
 
  jmp lol.end
 
@@ -410,6 +411,24 @@ msgLButtonUp.game.Double:
  mov dword [printFlag], 6
  jmp lol.end
 
+msgLButtonUp.volume.on:
+ invoke mciSendString, music_pause, 0, 0, 0
+ mov eax, [button_of]
+ mov [button_onof], eax
+ mov [drawBitmap.bitmapHandles.menu+4*4], eax
+ mov [drawBitmap.bitmapHandles.settings+4*3], eax
+ stdcall drawBitmap.ChangeBitmapUnderDraw, [button_of], [button_on]
+ jmp lol.end
+
+msgLButtonUp.volume.of:
+ invoke mciSendString, music_play, 0, 0, 0
+ mov eax, [button_on]
+ mov [button_onof], eax
+  mov [drawBitmap.bitmapHandles.menu+4*4], eax
+ mov [drawBitmap.bitmapHandles.settings+4*3], eax
+ stdcall drawBitmap.ChangeBitmapUnderDraw, [button_on], [button_of]
+ jmp lol.end
+
 lol.end:
  mov dword [hwndBitmapMove], 0
  invoke InvalidateRect, [hwnddlg], NULL, FALSE
@@ -452,7 +471,8 @@ movePtBuf POINT
 xMove: dd 0
 yMove: dd 0
 
-music: db 'play music.mp3 repeat', 0
+music_play: db 'play music\music.mp3 repeat', 0
+music_pause: db 'pause music\music.mp3', 0
 
 include 'Units\random.h'
 include 'Units\random.du'
@@ -466,11 +486,7 @@ include 'Units\loadImages.du'
 include 'Units\dealer.h'
 include 'Units\dealer.du'
 
-include 'Units\RECTANGLES.du'
-
 include 'Units\drawBitmap.du'
-
-include 'Units\static_class.du'
 
 include 'Units\screen_translater.du'
 
@@ -480,7 +496,6 @@ include 'Units\bot.du'
 
 ;include 'Units\brez.du'
 
-include 'Units\button_class.du'
 include 'Units\gameProcess.du'
 
 include 'Units\string_work.du'

@@ -13,6 +13,13 @@ button_arr_game_push: dd 5 dup 0
 back_name1: db 'Bitmaps\back.bmp', 0
 back_name2: db 'Bitmaps\b2fv.bmp', 0
 
+button_on_name: db 'music\on.bmp', 0
+button_of_name: db 'music\of.bmp', 0
+button_on: dd ?
+button_of: dd ?
+button_onof: dd ?
+
+
 card_cover_koloda: dd ?
 card_cover: dd ?
 

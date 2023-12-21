@@ -59,6 +59,15 @@ LR_DEFAULTCOLOR+LR_DEFAULTSIZE+LR_LOADFROMFILE
      cmp ecx, 4
      jl @B
 
+     invoke LoadImage, [_hModule], button_on_name, IMAGE_BITMAP, 0, 0,\
+LR_DEFAULTCOLOR+LR_DEFAULTSIZE+LR_LOADFROMFILE
+     mov [button_on], eax
+     mov [button_onof], eax
+
+     invoke LoadImage, [_hModule], button_of_name, IMAGE_BITMAP, 0, 0,\
+LR_DEFAULTCOLOR+LR_DEFAULTSIZE+LR_LOADFROMFILE
+     mov [button_of], eax
+
      ret
 endp
 
@@ -72,6 +81,8 @@ proc loadImages.ButtonsLoad.init uses ecx ebx
      inc ecx
      cmp ecx, 4
      jl @B
+     mov eax, [button_onof]
+     mov [drawBitmap.bitmapHandles.menu+ecx*4], eax
 
 @@:
      push ecx
@@ -79,9 +90,10 @@ proc loadImages.ButtonsLoad.init uses ecx ebx
      mov [drawBitmap.bitmapHandles.settings+ecx*4-16], eax
      pop ecx
      inc ecx
-     cmp ecx, 8
+     cmp ecx, 7
      jl @B
-
+     mov eax, [button_onof]
+     mov [drawBitmap.bitmapHandles.settings+ecx*4-16], eax
 
 
      mov ebx, [screen_translate.width.half]
@@ -116,6 +128,12 @@ proc loadImages.ButtonsLoad.init uses ecx ebx
      mov [drawBitmap.bitmapCoord.menu+24], ebx
      mov [drawBitmap.bitmapCoord.menu+28], ecx
 
+     mov ebx, [screen_translate.width]
+     mov ecx, 0
+     sub ebx, volume_size
+     mov [drawBitmap.bitmapCoord.menu+32], ebx
+     mov [drawBitmap.bitmapCoord.menu+36], ecx
+
      mov ebx, [screen_translate.width.half]
      sub ebx, width_button_menu/2
      mov ecx, [screen_translate.height.half]
@@ -140,6 +158,11 @@ proc loadImages.ButtonsLoad.init uses ecx ebx
      mov [drawBitmap.bitmapCoord.settings+16], ebx
      mov [drawBitmap.bitmapCoord.settings+20], ecx
 
+     mov ebx, [screen_translate.width]
+     mov ecx, 0
+     sub ebx, volume_size
+     mov [drawBitmap.bitmapCoord.settings+24], ebx
+     mov [drawBitmap.bitmapCoord.settings+28], ecx
 
      ret
 endp
